@@ -2,7 +2,6 @@ package com.example.domain.myapplication;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -12,19 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -70,11 +61,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }*/
 
+        if(login.equals("lorem") && pass.equals("ipsum")) return true;
 
+        return false;
 
-    return true;
-
-}
+    }
 
     private String sendLoginRequest() {
         try {
@@ -123,6 +114,12 @@ public class LoginActivity extends AppCompatActivity {
 
         } catch (IOException e) {
             e.printStackTrace();
+            return "fail";
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return "fail";
         }
         return "fail";
     }
@@ -137,9 +134,14 @@ public class LoginActivity extends AppCompatActivity {
         ed1 = (EditText) findViewById(R.id.editText);
         ed2 = (EditText) findViewById(R.id.editText2);
 
+        // standardowe login i haslo
+        ed1.setText("lorem");
+        ed2.setText("ipsum");
+
         b2 = (Button) findViewById(R.id.button2);
         tx1 = (TextView) findViewById(R.id.textView3);
         tx1.setVisibility(View.VISIBLE);
+//dfsdfdsfds
 
 
         b1.setOnClickListener(new View.OnClickListener() {
@@ -148,11 +150,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (validate_login(ed1.getText().toString(), ed2.getText().toString())) {
                     String result = sendLoginRequest();
                     Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-                    if(result.equals("success"))
-                    {
-                        Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(goToNextActivity);
-                    }
+
+                    Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(goToNextActivity);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "Niepoprawne hasło lub nazwa użytkownika", Toast.LENGTH_SHORT).show();
 
