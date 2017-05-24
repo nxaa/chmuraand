@@ -40,27 +40,29 @@
                 android:layout_marginTop="7dp"
                 android:text="Coordinates"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner"
+                android:layout_marginStart="16dp" />
 
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="0dp"
                 android:text="Trip"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/retakePictureButton" />
+                app:layout_constraintTop_toBottomOf="@+id/retakePictureButton"
+                android:layout_marginStart="16dp" />
 
             <Button
                 android:id="@+id/button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="88dp"
+                android:layout_height="48dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="20dp"
                 android:text="..."
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginEnd="8dp" />
 
             <Spinner
                 android:id="@+id/spinner"
@@ -70,7 +72,8 @@
                 android:layout_marginTop="6dp"
                 android:visibility="visible"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                android:layout_marginStart="8dp" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -80,7 +83,8 @@
                 android:layout_marginTop="30dp"
                 android:text="Y"
                 app:layout_constraintRight_toLeftOf="@+id/yText"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginEnd="10dp" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -90,7 +94,8 @@
                 android:layout_marginTop="30dp"
                 android:text="X"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginStart="16dp" />
 
             <EditText
                 android:id="@+id/yText"
@@ -102,7 +107,8 @@
                 android:enabled="false"
                 android:inputType="none"
                 app:layout_constraintRight_toLeftOf="@+id/button"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginEnd="10dp" />
 
             <EditText
                 android:id="@+id/xText"
@@ -114,15 +120,19 @@
                 android:enabled="false"
                 android:inputType="none"
                 app:layout_constraintLeft_toRightOf="@+id/textView6"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginStart="16dp" />
 
             <Button
                 android:id="@+id/sendFileButton"
                 android:layout_width="368dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
+                android:onClick="sendOnClick"
                 android:text="Send file"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -130,7 +140,7 @@
 
             <Button
                 android:id="@+id/retakePictureButton"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
@@ -139,7 +149,9 @@
                 android:text="Retake picture"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

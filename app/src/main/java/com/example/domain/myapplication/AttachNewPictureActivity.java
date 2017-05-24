@@ -1,18 +1,22 @@
 package com.example.domain.myapplication;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
+
+import com.example.domain.myapplication.requests.RequestService;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +32,7 @@ public class AttachNewPictureActivity extends AppCompatActivity {
     private String pointId;
     private static Context context;
     private String mCurrentPhotoPath;
+    private RequestService requestService = new RequestService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,20 @@ public class AttachNewPictureActivity extends AppCompatActivity {
 
     public void retakePhotoOnClick(View view) {
         dispatchTakePictureIntent();
+    }
+
+    public void sendOnClick(View view) {
+        String content = requestService.sendDummyRequest("tutaj cos na razie nie wazne co");
+        AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
+        alertDialog.setTitle("Dziala");
+        alertDialog.setMessage(content);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 
     public void dispatchTakePictureIntent() {
