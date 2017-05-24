@@ -4,20 +4,40 @@
     android:orientation="vertical" >
 
     <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Opcje"
+    android:id="@+id/textView" />
+
+    <Button
+        android:id="@+id/button_addmedia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show Map"
-        android:id="@+id/textView" />
+        android:onClick="addMediaOnClick"
+        android:text="Dodaj media"
+        android:layout_below="@+id/textView"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView" />
 
     <Button
         android:id="@+id/button_mapy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="mapsOnClick"
-        android:text="Mapy"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView" />
+        android:text="Mapa"
+        android:layout_below="@+id/button_addmedia"
+        android:layout_alignLeft="@+id/button_addmedia"
+        android:layout_alignStart="@+id/button_addmedia" />
+
+    <Button
+        android:id="@+id/button_plakat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="plakatOnClick"
+        android:text="Plakat"
+        android:layout_below="@+id/button_mapy"
+        android:layout_alignLeft="@+id/button_mapy"
+        android:layout_alignStart="@+id/button_mapy" />
 
     <TextView
         android:layout_width="wrap_content"

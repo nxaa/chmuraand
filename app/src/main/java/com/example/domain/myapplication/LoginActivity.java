@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                     String result = sendLoginRequest();
                     Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 
-                    Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent goToNextActivity = new Intent(getApplicationContext(), TripsListActivity.class);
                     startActivity(goToNextActivity);
 
                 } else {

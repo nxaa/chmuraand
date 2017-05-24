@@ -31,13 +31,14 @@ public class MainActivity extends AppCompatActivity {
         startAddMediaActivity(this, null,null);
     }
 
-    public void mapsOnClick(View view) {
+    public void tripsOnClick(View view) {
         Intent intent = new Intent(getApplicationContext(), TripsListActivity.class);
-        intent.putExtra("tripId", (String)null);
         startActivity(intent);
     }
-    public void loginOnClick(View view) {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+
+    public void mapsOnClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        intent.putExtra("tripId", (String)null);
         startActivity(intent);
     }
 }

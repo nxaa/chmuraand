@@ -2,6 +2,7 @@ package com.example.domain.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,12 +31,10 @@ public class TripsListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trips_list);
-        Intent intent = getIntent();
-       /* if(intent.hasExtra("tripId")) {
-            this.tripId = intent.getStringExtra("tripId");
-        }*/
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
+        setContentView(R.layout.activity_trips_list);
         list= getListElements();
 
         // Get ListView object from xml
@@ -69,6 +68,8 @@ public class TripsListActivity extends AppCompatActivity {
     public ArrayList<ListElement> getListElements() {
         ArrayList<ListElement> list= new ArrayList<ListElement>();
         String result=Config.downloadDataFromURL(Config.API_URL+"trips");
+        Log.w("Trips data url",Config.API_URL+"trips");
+        Log.w("Trips data result",result);
         try {
             JSONObject jObject = new JSONObject(result);
                 JSONArray jTrips = jObject.getJSONArray("trips");
@@ -78,14 +79,17 @@ public class TripsListActivity extends AppCompatActivity {
                 String name=jTrip.getString("name");
                 String created=jTrip.getString("created");
                 String description=jTrip.getString("description");
-                JSONArray jTripMedias=jTrip.getJSONArray("medias");
-                for(int k=0; k < jTripMedias.length();k++) {
-                    JSONObject jMedia = jTripMedias.getJSONObject(k);
-                    String mediaId=jMedia.getString("id");
-                    String mediaType=jMedia.getString("type");
-                    String mediaURL=jMedia.getString("url");
-                    String mediaMinURL=jMedia.getString("minUrl");
+                if(jTrip.has("medias")) {
+                    //nie wiem po co  ale moze komus przyda
+                    JSONArray jTripMedias = jTrip.getJSONArray("medias");
+                    for (int k = 0; k < jTripMedias.length(); k++) {
+                        JSONObject jMedia = jTripMedias.getJSONObject(k);
+                        String mediaId = jMedia.getString("id");
+                        String mediaType = jMedia.getString("type");
+                        String mediaURL = jMedia.getString("url");
+                        String mediaMinURL = jMedia.getString("minUrl");
 
+                    }
                 }
                 list.add(new ListElement(id, name));
             } // End Loop

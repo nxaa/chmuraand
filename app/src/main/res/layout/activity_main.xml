@@ -37,14 +37,24 @@
         android:layout_alignStart="@+id/button_addmedia" />
 
     <Button
+        android:id="@+id/button_trips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="tripsOnClick"
+        android:text="Wycieczki"
+        android:layout_below="@+id/button_mapy"
+        android:layout_alignLeft="@+id/button_mapy"
+        android:layout_alignStart="@+id/button_mapy" />
+
+    <Button
         android:id="@+id/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="loginOnClick"
         android:text="Login"
-        android:layout_below="@+id/button_mapy"
-        android:layout_alignLeft="@+id/button_mapy"
-        android:layout_alignStart="@+id/button_mapy" />
+        android:layout_below="@+id/button_trips"
+        android:layout_alignLeft="@+id/button_trips"
+        android:layout_alignStart="@+id/button_trips" />
 
 
 </RelativeLayout>

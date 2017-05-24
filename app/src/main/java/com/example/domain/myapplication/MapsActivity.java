@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +23,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -135,7 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public MarkerOptions mapElementToMarkerOptions(MapElement el){
         MarkerOptions mOptions=new MarkerOptions().position(el.pos).title(el.title);
         try {
-            URL url = new URL(API_URL+"trip/photos_miniature/"+tripId+"/"+String.valueOf(el.iconID));//+String.valueOf(el.iconID)
+            URL url = new URL(API_URL+"trips/"+tripId+"/photos/"+String.valueOf(el.iconID));//+String.valueOf(el.iconID)
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
             Bitmap bmpSized=Bitmap.createScaledBitmap(bmp, 60, 60, false);
             mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmpSized));
@@ -150,10 +154,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public ArrayList<MapElement> getMapElements() {
         ArrayList<MapElement> arr=new  ArrayList<MapElement>();
 
-        arr.add(new MapElement(new LatLng(51,20),new String("Polska1"),10,new Date(1)));
-        arr.add(new MapElement(new LatLng(53,20),new String("Polska3"),11,new Date(3)));
-        arr.add(new MapElement(new LatLng(52,21),new String("Polska4"),12,new Date(4)));
-        arr.add(new MapElement(new LatLng(52,19),new String("Polska2"),13,new Date(2)));
+        arr.add(new MapElement(new LatLng(51,20),new String("Polska1"),"10",new Date(1),"1"));
+        arr.add(new MapElement(new LatLng(53,20),new String("Polska3"),"11",new Date(3),"2"));
+        arr.add(new MapElement(new LatLng(52,21),new String("Polska4"),"12",new Date(4),"3"));
+        arr.add(new MapElement(new LatLng(52,19),new String("Polska2"),"13",new Date(2),"4"));
+
+        String result=Config.downloadDataFromURL(Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data url",Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data result",result);
+        try {
+            JSONObject jTrip = new JSONObject(result);
+            String id=jTrip.getString("id");
+            String name=jTrip.getString("name");
+            String created=jTrip.getString("created");
+            String description=jTrip.getString("description");
+            if(jTrip.has("medias")){
+                Object jTripMediasCheck = jTrip.get("medias");
+                if (jTripMediasCheck instanceof JSONArray) {
+                    JSONArray jTripMedias=jTrip.getJSONArray("medias");
+                    for(int k=0; k < jTripMedias.length();k++) {
+                        JSONObject jMedia = jTripMedias.getJSONObject(k);
+                        String mediaId=jMedia.getString("id");
+                        String mediaType=jMedia.getString("type");
+                        String mediaURL=jMedia.getString("url");
+                        String mediaMinURL=jMedia.getString("minUrl");
+
+                        if(mediaType.equals("Photo")){
+                            arr.add(new MapElement(new LatLng(52,19),new String("Polska2"),mediaId,new Date(2),mediaId));
+                        }
+
+                    }
+                }
+
+            }
+
+
+
+        } catch (Exception e) {
+            Log.e("Exception", "Error: " + e.toString());
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Błąd pobierania listy punktów", Toast.LENGTH_SHORT).show();
+        }
+
 
         Collections.sort(arr);
         return arr;
@@ -163,7 +205,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 *****************************************************/
     @Override
     public void onMapClick(LatLng point) {
-        MapElement mapElement=new MapElement(point,this.getLastDate().toString(),0,this.getLastDate());
+        MapElement mapElement=new MapElement(point,this.getLastDate().toString(),"",this.getLastDate(),"");
         MarkerOptions mOptions=this.mapElementToMarkerOptions(mapElement);
         Marker mmm=mMap.addMarker(mOptions);
         marker_mapelements.add(new Marker_MapElement(mmm, mapElement));
@@ -191,11 +233,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Config.imageToDisplay=bmp;
             //Intent goToNextActivity = new Intent(getApplicationContext(), DisplayImageActivity.class);
             //startActivity(goToNextActivity);
-            MainActivity.startAddMediaActivity(this, tripId, String.valueOf(el.pointId));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        MainActivity.startAddMediaActivity(this, tripId, el.pointId);
 
 
 
@@ -226,15 +268,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private class MapElement implements Comparable<MapElement> {
         LatLng pos;
         String title;
-        int iconID;
+        String iconID;
         Date date;
-        int pointId;
+        String pointId;
 
-        public MapElement(LatLng ppos, String ptitle, int piconID, Date pdate) {
+        public MapElement(LatLng ppos, String ptitle, String piconID, Date pdate,String ppointId) {
             pos = ppos;
             title = ptitle;
             iconID = piconID;
             date = pdate;
+            pointId = ppointId;
         }
         @Override
         public int compareTo(MapElement o) {

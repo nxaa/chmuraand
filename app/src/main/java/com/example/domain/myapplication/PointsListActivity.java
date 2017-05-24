@@ -68,22 +68,14 @@ public class PointsListActivity extends AppCompatActivity {
         Log.w("Trip data url",Config.API_URL+"trips/"+tripId);
         Log.w("Trip data result",result);
         try {
-            //JSONObject jObject = new JSONObject(result);
-            JSONArray jTrips = new JSONArray(result);
-            for(int i=0; i < jTrips.length(); i++) {
-                JSONObject jTrip = jTrips.getJSONObject(i);
-                String id=jTrip.getString("tripId");
-                if(!id.equals(tripId)){
-                    continue;
-                }
-                if(jTrip.has("geometry")){
-                    JSONObject jTripGeometry=jTrip.getJSONObject("geometry");
-                    //JSONArray jTripCoordinates=jTripGeometry.getJSONArray("coordinates");
-                    //for(int k=0; k < jTripCoordinates.length();k++) {
-                        //Tutaj była jakaś magia, raz tablica raz tablica tablic
-                    //}
-                }
-                if(jTrip.has("medias")){
+            JSONObject jTrip = new JSONObject(result);
+            String id=jTrip.getString("id");
+            String name=jTrip.getString("name");
+            String created=jTrip.getString("created");
+            String description=jTrip.getString("description");
+            if(jTrip.has("medias")){
+                Object jTripMediasCheck = jTrip.get("medias");
+                if (jTripMediasCheck instanceof JSONArray) {
                     JSONArray jTripMedias=jTrip.getJSONArray("medias");
                     for(int k=0; k < jTripMedias.length();k++) {
                         JSONObject jMedia = jTripMedias.getJSONObject(k);
@@ -96,7 +88,8 @@ public class PointsListActivity extends AppCompatActivity {
                     }
                 }
 
-            } // End Loop
+            }
+
 
 
         } catch (Exception e) {
@@ -114,8 +107,16 @@ public class PointsListActivity extends AppCompatActivity {
     }
     public void mapsOnClick(View view) {
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        intent.putExtra("tripId", (String)null);
+        intent.putExtra("tripId", tripId);
         startActivity(intent);
+    }
+
+    public void addMediaOnClick(View view) {
+        MainActivity.startAddMediaActivity(this, tripId, null);
+    }
+
+    public void plakatOnClick(View view) {
+        //MainActivity.startAddMediaActivity(this, tripId, null);
     }
 
     /****************************************************
