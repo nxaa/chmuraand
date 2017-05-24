@@ -3,6 +3,7 @@ package com.example.domain.myapplication;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         //Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
         //Intent goToNextActivity = new Intent(getApplicationContext(), MapsActivity.class);
         //Intent goToNextActivity = new Intent(getApplicationContext(), DisplayImageActivity.class);

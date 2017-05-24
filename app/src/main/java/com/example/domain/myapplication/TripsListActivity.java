@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,10 +68,38 @@ public class TripsListActivity extends AppCompatActivity {
 
     public ArrayList<ListElement> getListElements() {
         ArrayList<ListElement> list= new ArrayList<ListElement>();
-        list.add(new ListElement(1,"Wycieczka Warszawa"));
+        String result=Config.downloadDataFromURL(Config.API_URL+"trips");
+        try {
+            JSONObject jObject = new JSONObject(result);
+                JSONArray jTrips = jObject.getJSONArray("trips");
+            for(int i=0; i < jTrips.length(); i++) {
+                JSONObject jTrip = jTrips.getJSONObject(i);
+                String id=jTrip.getString("id");
+                String name=jTrip.getString("name");
+                String created=jTrip.getString("created");
+                String description=jTrip.getString("description");
+                JSONArray jTripMedias=jTrip.getJSONArray("medias");
+                for(int k=0; k < jTripMedias.length();k++) {
+                    JSONObject jMedia = jTripMedias.getJSONObject(k);
+                    String mediaId=jMedia.getString("id");
+                    String mediaType=jMedia.getString("type");
+                    String mediaURL=jMedia.getString("url");
+                    String mediaMinURL=jMedia.getString("minUrl");
+
+                }
+                list.add(new ListElement(id, name));
+            } // End Loop
+
+        } catch (Exception e) {
+            Log.e("Exception", "Error: " + e.toString());
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Błąd pobierania listy wycieczek", Toast.LENGTH_SHORT).show();
+        }
+
+        /*list.add(new ListElement(1,"Wycieczka Warszawa"));
         list.add(new ListElement(2,"Wycieczka Kraków"));
         list.add(new ListElement(3,"Poznan"));
-        list.add(new ListElement(4,"Warszawa"));
+        list.add(new ListElement(4,"Warszawa"));*/
         return list;
     }
 
@@ -75,10 +108,10 @@ public class TripsListActivity extends AppCompatActivity {
      ***************   Helper Classes *******************
      *****************************************************/
     private class ListElement  {
-        int tripId;
+        String tripId;
         String title;
 
-        public ListElement(int ptripId, String ptitle) {
+        public ListElement(String ptripId, String ptitle) {
             tripId = ptripId;
             title = ptitle;
         }

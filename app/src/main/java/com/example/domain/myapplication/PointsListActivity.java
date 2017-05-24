@@ -9,6 +9,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -60,10 +64,52 @@ public class PointsListActivity extends AppCompatActivity {
 
     public ArrayList<ListElement> getListElements() {
         ArrayList<ListElement> list= new ArrayList<ListElement>();
-        list.add(new ListElement(1,"Punkt 1"));
-        list.add(new ListElement(2,"Punkt 2"));
-        list.add(new ListElement(5,"Punkt 3"));
-        list.add(new ListElement(1,"Punkt 4"));
+        String result=Config.downloadDataFromURL(Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data url",Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data result",result);
+        try {
+            //JSONObject jObject = new JSONObject(result);
+            JSONArray jTrips = new JSONArray(result);
+            for(int i=0; i < jTrips.length(); i++) {
+                JSONObject jTrip = jTrips.getJSONObject(i);
+                String id=jTrip.getString("tripId");
+                if(!id.equals(tripId)){
+                    continue;
+                }
+                if(jTrip.has("geometry")){
+                    JSONObject jTripGeometry=jTrip.getJSONObject("geometry");
+                    //JSONArray jTripCoordinates=jTripGeometry.getJSONArray("coordinates");
+                    //for(int k=0; k < jTripCoordinates.length();k++) {
+                        //Tutaj była jakaś magia, raz tablica raz tablica tablic
+                    //}
+                }
+                if(jTrip.has("medias")){
+                    JSONArray jTripMedias=jTrip.getJSONArray("medias");
+                    for(int k=0; k < jTripMedias.length();k++) {
+                        JSONObject jMedia = jTripMedias.getJSONObject(k);
+                        String mediaId=jMedia.getString("id");
+                        String mediaType=jMedia.getString("type");
+                        String mediaURL=jMedia.getString("url");
+                        String mediaMinURL=jMedia.getString("minUrl");
+                        list.add(new ListElement(mediaId, mediaType+" "+mediaURL));
+
+                    }
+                }
+
+            } // End Loop
+
+
+        } catch (Exception e) {
+            Log.e("Exception", "Error: " + e.toString());
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Błąd pobierania listy punktów", Toast.LENGTH_SHORT).show();
+        }
+
+
+        /*list.add(new ListElement("1","Punkt 1"));
+        list.add(new ListElement("2","Punkt 2"));
+        list.add(new ListElement("3","Punkt 3"));
+        list.add(new ListElement("4","Punkt 4"));*/
         return list;
     }
     public void mapsOnClick(View view) {
@@ -76,10 +122,10 @@ public class PointsListActivity extends AppCompatActivity {
      ***************   Helper Classes *******************
      *****************************************************/
     private class ListElement  {
-        int pointId;
+        String pointId;
         String title;
 
-        public ListElement(int ptripId, String ptitle) {
+        public ListElement(String ptripId, String ptitle) {
             pointId = ptripId;
             title = ptitle;
         }

@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 
+import static com.example.domain.myapplication.Config.API_URL;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
 
     private String tripId="1";
@@ -81,7 +83,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         polyline = mMap.addPolyline(rectOptions);
 
         this.refreshFromWeb();
-        Log.w("aaaaaaaaaaa",this.downloadDataFromURL("http://alvinalexander.com/java/edu/pj/pj010011"));
     }
 
     public void refreshFromWeb(){
@@ -130,20 +131,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return date;
     }
 
-    public String downloadDataFromURL(String url){
-        String out="EMPTY_";
-        try {
-            out = new Scanner(new URL("http://www.google.com").openStream(), "UTF-8").useDelimiter("\\A").next();
-        }catch (Exception e) {
-                e.printStackTrace();
-            }
-        return out;
-    }
 
     public MarkerOptions mapElementToMarkerOptions(MapElement el){
         MarkerOptions mOptions=new MarkerOptions().position(el.pos).title(el.title);
         try {
-            URL url = new URL(Config.API_URL+"trip/photos_miniature/"+tripId+"/"+String.valueOf(el.iconID));//+String.valueOf(el.iconID)
+            URL url = new URL(API_URL+"trip/photos_miniature/"+tripId+"/"+String.valueOf(el.iconID));//+String.valueOf(el.iconID)
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
             Bitmap bmpSized=Bitmap.createScaledBitmap(bmp, 60, 60, false);
             mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmpSized));
@@ -193,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
 
 
-            URL url = new URL(Config.ICON_URL);//+String.valueOf(el.iconID)
+            URL url = new URL(Config.API_URL+"photos/"+String.valueOf(el.iconID));
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
             Config.imageToDisplay=bmp;
