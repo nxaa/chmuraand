@@ -26,7 +26,7 @@ import java.util.Map;
 public class RequestService {
     private static String TRIPS_URL_BASE = "http://tripper-api.azurewebsites.net/trips/";
 
-    public String postMedia(String tripId, String m_id, String filepath, String filefield, String fileMimeType) {
+    public String postMedia(String tripId, String m_id, String filepath, String fileMimeType) {
         HttpURLConnection connection = null;
         DataOutputStream outputStream = null;
         InputStream inputStream = null;
@@ -64,7 +64,7 @@ public class RequestService {
 
             outputStream = new DataOutputStream(connection.getOutputStream());
             outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-            outputStream.writeBytes("Content-Disposition: form-data; name=\"" + filefield + "\"; filename=\"" + q[idx] + "\"" + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"mediaFile\"; filename=\"" + q[idx] + "\"" + lineEnd);
             outputStream.writeBytes("Content-Type: " + fileMimeType + lineEnd);
             outputStream.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
 
