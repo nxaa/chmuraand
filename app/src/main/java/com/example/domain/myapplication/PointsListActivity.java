@@ -116,7 +116,13 @@ public class PointsListActivity extends AppCompatActivity {
     }
 
     public void plakatOnClick(View view) {
-        //MainActivity.startAddMediaActivity(this, tripId, null);
+    }
+
+    public void deleteTripOnClick(View view) {
+        Config.sendDeleteUrl(getApplicationContext(),Config.API_URL+"trips/"+tripId);
+        Intent goToNextActivity = new Intent(getApplicationContext(), TripsListActivity.class);
+        goToNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(goToNextActivity);
     }
 
     /****************************************************

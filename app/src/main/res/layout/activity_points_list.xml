@@ -39,6 +39,16 @@
         android:layout_alignLeft="@+id/button_mapy"
         android:layout_alignStart="@+id/button_mapy" />
 
+    <Button
+        android:id="@+id/button_delete_trip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="deleteTripOnClick"
+        android:text="Usun"
+        android:layout_below="@+id/button_plakat"
+        android:layout_alignLeft="@+id/button_plakat"
+        android:layout_alignStart="@+id/button_plakat" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
