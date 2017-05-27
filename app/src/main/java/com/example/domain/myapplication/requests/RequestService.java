@@ -26,16 +26,26 @@ import java.util.Map;
 public class RequestService {
     private static String TRIPS_URL_BASE = "http://tripper-api.azurewebsites.net/trips/";
 
-    public String postMedia(String tripId, String m_id, String filepath, String fileMimeType) {
+    public String postMedia(String tripId, String filepath) {
+        return postMedia(tripId, filepath, null, null);
+    }
+
+    public String postMedia(String tripId, String filepath, String lat, String lng) {
         HttpURLConnection connection = null;
         DataOutputStream outputStream = null;
         InputStream inputStream = null;
         Map<String, String> params = new HashMap<>();
 
-        params.put("m_id", m_id);
+        if (lat != null && lng != null) {
+            params.put("lat", lat);
+            params.put("lng", lng);
+        }
+
         String twoHyphens = "--";
         String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
         String lineEnd = "\r\n";
+
+        String fileMimeType = "image/png";
 
         String result = "";
 
@@ -203,6 +213,103 @@ public class RequestService {
 
         return output;
     }
+
+    public String getTripMedia(String tripId, String mediaId) {
+        URL url;
+        HttpURLConnection connection = null;
+        String output = "";
+        try {
+            url = new URL(TRIPS_URL_BASE + tripId + "/media/" + mediaId);
+            connection = (HttpURLConnection) url.openConnection();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return "Error, response code = " + responseCode;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                output += a;
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            connection.disconnect();
+        }
+
+        return output;
+    }
+
+    public String getTripPhotos(String tripId, String photoId) {
+        URL url;
+        HttpURLConnection connection = null;
+        String output = "";
+        try {
+            url = new URL(TRIPS_URL_BASE + tripId + "/photos/" + photoId);
+            connection = (HttpURLConnection) url.openConnection();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return "Error, response code = " + responseCode;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                output += a;
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            connection.disconnect();
+        }
+
+        return output;
+    }
+
+    public String getTripMediaAll(String tripId) {
+        URL url;
+        HttpURLConnection connection = null;
+        String output = "";
+        try {
+            url = new URL(TRIPS_URL_BASE + tripId + "/media");
+            connection = (HttpURLConnection) url.openConnection();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return "Error, response code = " + responseCode;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                output += a;
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            connection.disconnect();
+        }
+
+        return output;
+    }
+
 
     public String getTrip(String tripId) {
         URL url;

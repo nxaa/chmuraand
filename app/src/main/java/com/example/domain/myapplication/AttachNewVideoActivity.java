@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.VideoView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class AttachNewVideoActivity extends AppCompatActivity {
     static final int REQUEST_VIDEO_CAPTURE = 1;
     private String tripId;
     private String pointId;
+    private String mCurrentVideoString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

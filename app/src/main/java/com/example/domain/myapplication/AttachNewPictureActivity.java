@@ -51,7 +51,8 @@ public class AttachNewPictureActivity extends AppCompatActivity {
     }
 
     public void sendOnClick(View view) {
-        String content = requestService.sendDummyRequest("tutaj cos na razie nie wazne co");
+        String content = requestService.postMedia(tripId, mCurrentPhotoPath);
+        //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
         alertDialog.setTitle("Dziala");
         alertDialog.setMessage(content);
