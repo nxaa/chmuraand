@@ -2,9 +2,11 @@ package com.example.domain.myapplication;
 
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -68,19 +71,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String sendLoginRequest() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         try {
             // Create URL
             URL LogowanieAPI = null;
             try {
-                LogowanieAPI = new URL("/trip/loging");
+                LogowanieAPI = new URL(Config.API_URL+"trip/loging");
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                Log.w("Login Error","Blad logowania");
+                //e.printStackTrace();
             }
 
             // Create connection
-            HttpsURLConnection LoginConnection = null;
+            HttpURLConnection LoginConnection = null;
 
-            LoginConnection = (HttpsURLConnection) LogowanieAPI.openConnection();
+            LoginConnection = (HttpURLConnection) LogowanieAPI.openConnection();
 
             LoginConnection.setRequestMethod("POST");
             LoginConnection.setRequestProperty("user_login", ed1.getText().toString());
@@ -149,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validate_login(ed1.getText().toString(), ed2.getText().toString())) {
                     String result = sendLoginRequest();
-                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 
                     Intent goToNextActivity = new Intent(getApplicationContext(), TripsListActivity.class);
                     startActivity(goToNextActivity);

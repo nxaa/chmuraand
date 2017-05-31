@@ -12,38 +12,53 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonLineString;
+import com.google.maps.android.data.geojson.GeoJsonMultiLineString;
+import com.google.maps.android.data.geojson.GeoJsonMultiPoint;
+import com.google.maps.android.data.geojson.GeoJsonMultiPolygon;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
+import com.google.maps.android.data.geojson.GeoJsonPolygon;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import static com.example.domain.myapplication.Config.API_URL;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
 
-    private String tripId="1";
+    private String tripId = "1";
     private GoogleMap mMap;
     private Polyline polyline;
     private ArrayList<Marker_MapElement> marker_mapelements;
+    GeoJsonLayer layer;
 
 
     @Override
@@ -51,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        if(intent.hasExtra("tripId")) {
+        if (intent.hasExtra("tripId")) {
             this.tripId = intent.getStringExtra("tripId");
         }
 
@@ -82,15 +97,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
 
-        marker_mapelements=new ArrayList<Marker_MapElement>();
+        marker_mapelements = new ArrayList<Marker_MapElement>();
         PolylineOptions rectOptions = new PolylineOptions();
         polyline = mMap.addPolyline(rectOptions);
+        layer = new GeoJsonLayer(mMap, new JSONObject());
 
         this.refreshFromWeb();
     }
 
-    public void refreshFromWeb(){
-        for (Marker_MapElement m_el: marker_mapelements) {
+    public void refreshFromWeb() {
+       /* for (Marker_MapElement m_el: marker_mapelements) {
             m_el.marker.remove();
         }
         marker_mapelements.clear();
@@ -115,79 +131,192 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             longitude/=mapElements.size();
             mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
         }
-       ;
-        updatePolyline();
+        updatePolyline();*/
+
+
+        JSONObject geoJSON = getGeoJSON();
+        Log.w("Trip str", geoJSON.toString());
+        layer.removeLayerFromMap();
+        layer = new GeoJsonLayer(mMap, geoJSON);
+        layer.addLayerToMap();
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(getBoundingFromLayer(), 200);
+        mMap.moveCamera(cu);
+
     }
-    public void updatePolyline(){
+
+    public LatLngBounds getBoundingFromLayer() {
+        List<LatLng> coordinates = new ArrayList<>();
+        for (GeoJsonFeature feature : layer.getFeatures()) {
+            if(feature.hasGeometry()) {
+                Geometry gg = feature.getGeometry();
+                coordinates.addAll(getCoordinatesFromGeometry(gg));
+            }
+        }
+
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        for (LatLng latLng : coordinates) {
+            builder.include(latLng);
+        }
+
+        if(coordinates.isEmpty()){
+            builder.include(new LatLng(47, 15));
+            builder.include(new LatLng(55, 23));
+        }
+
+        LatLngBounds boundingBoxFromBuilder = builder.build();
+
+        //return boundingBox;
+        return boundingBoxFromBuilder;
+    }
+
+    private List<LatLng> getCoordinatesFromGeometry(Geometry geometry) {
+
+        List<LatLng> coordinates = new ArrayList<>();
+
+        // GeoJSON geometry types:
+        // http://geojson.org/geojson-spec.html#geometry-objects
+
+        switch (geometry.getGeometryType()) {
+            case "Point":
+                coordinates.add(((GeoJsonPoint) geometry).getCoordinates());
+                break;
+            case "MultiPoint":
+                List<GeoJsonPoint> points = ((GeoJsonMultiPoint) geometry).getPoints();
+                for (GeoJsonPoint point : points) {
+                    coordinates.add(point.getCoordinates());
+                }
+                break;
+            case "LineString":
+                coordinates.addAll(((GeoJsonLineString) geometry).getCoordinates());
+                break;
+            case "MultiLineString":
+                List<GeoJsonLineString> lines =
+                        ((GeoJsonMultiLineString) geometry).getLineStrings();
+                for (GeoJsonLineString line : lines) {
+                    coordinates.addAll(line.getCoordinates());
+                }
+                break;
+            case "Polygon":
+                List<? extends List<LatLng>> lists =
+                        ((GeoJsonPolygon) geometry).getCoordinates();
+                for (List<LatLng> list : lists) {
+                    coordinates.addAll(list);
+                }
+                break;
+            case "MultiPolygon":
+                List<GeoJsonPolygon> polygons =
+                        ((GeoJsonMultiPolygon) geometry).getPolygons();
+                for (GeoJsonPolygon polygon : polygons) {
+                    for (List<LatLng> list : polygon.getCoordinates()) {
+                        coordinates.addAll(list);
+                    }
+                }
+                break;
+        }
+
+        return coordinates;
+    }
+
+    public void updatePolyline() {
         polyline.remove();
         PolylineOptions rectOptions = new PolylineOptions();
-        for (Marker_MapElement m_el: marker_mapelements) {
+        for (Marker_MapElement m_el : marker_mapelements) {
             rectOptions.add(m_el.el.pos);
         }
         polyline = mMap.addPolyline(rectOptions);
     }
 
-    public Date getLastDate(){
-        Date date=new Date(1);
-        if(marker_mapelements.size()>0){
-            date=marker_mapelements.get(marker_mapelements.size() - 1).el.date;
+    public Date getLastDate() {
+        Date date = new Date(1);
+        if (marker_mapelements.size() > 0) {
+            date = marker_mapelements.get(marker_mapelements.size() - 1).el.date;
         }
         return date;
     }
 
-
-    public MarkerOptions mapElementToMarkerOptions(MapElement el){
-        MarkerOptions mOptions=new MarkerOptions().position(el.pos).title(el.title);
+    public JSONObject getGeoJSON() {
+        String result = Config.downloadDataFromURL(Config.API_URL + "trips/" + tripId);
+        Log.w("Trip GeoJson url", Config.API_URL + "trips/" + tripId);
+        Log.w("Trip GeoJson result", result);
+        JSONObject obj = new JSONObject();
         try {
-            URL url = new URL(API_URL+"trips/"+tripId+"/photos/"+String.valueOf(el.iconID));//+String.valueOf(el.iconID)
+            JSONObject ret = new JSONObject(result);
+            obj = new JSONObject(ret.getString("tripData"));
+        } catch (Exception e) {
+            // default file
+            try {
+                StringBuilder buf = new StringBuilder();
+                InputStream json = getAssets().open("geojson.json");
+                BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
+                String str;
+
+                while ((str = in.readLine()) != null) {
+                    buf.append(str);
+                }
+
+                in.close();
+                obj = new JSONObject(buf.toString());
+            } catch (Exception ee) {
+                ee.printStackTrace();
+            }
+            Log.w("Trip GeoJson web err", "Bas gejson from web");
+        }
+        return obj;
+    }
+
+    public MarkerOptions mapElementToMarkerOptions(MapElement el) {
+        MarkerOptions mOptions = new MarkerOptions().position(el.pos).title(el.title);
+        try {
+            URL url = new URL(API_URL + "trips/" + tripId + "/photos/" + String.valueOf(el.iconID));//+String.valueOf(el.iconID)
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            Bitmap bmpSized=Bitmap.createScaledBitmap(bmp, 60, 60, false);
+            Bitmap bmpSized = Bitmap.createScaledBitmap(bmp, 60, 60, false);
             mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmpSized));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("File Error", "Cannot download: " + API_URL + "trips/" + tripId + "/photos/" + String.valueOf(el.iconID));
+            //e.printStackTrace();
         }
         return mOptions;
     }
 
 
     public ArrayList<MapElement> getMapElements() {
-        ArrayList<MapElement> arr=new  ArrayList<MapElement>();
+        ArrayList<MapElement> arr = new ArrayList<MapElement>();
 
-        arr.add(new MapElement(new LatLng(51,20),new String("Polska1"),"10",new Date(1),"1"));
-        arr.add(new MapElement(new LatLng(53,20),new String("Polska3"),"11",new Date(3),"2"));
-        arr.add(new MapElement(new LatLng(52,21),new String("Polska4"),"12",new Date(4),"3"));
-        arr.add(new MapElement(new LatLng(52,19),new String("Polska2"),"13",new Date(2),"4"));
+        arr.add(new MapElement(new LatLng(51, 20), new String("Polska1"), "10", new Date(1), "1"));
+        arr.add(new MapElement(new LatLng(53, 20), new String("Polska3"), "11", new Date(3), "2"));
+        arr.add(new MapElement(new LatLng(52, 21), new String("Polska4"), "12", new Date(4), "3"));
+        arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), "13", new Date(2), "4"));
 
-        String result=Config.downloadDataFromURL(Config.API_URL+"trips/"+tripId);
-        Log.w("Trip data url",Config.API_URL+"trips/"+tripId);
-        Log.w("Trip data result",result);
+        String result = Config.downloadDataFromURL(Config.API_URL + "trips/" + tripId);
+        Log.w("Trip data url", Config.API_URL + "trips/" + tripId);
+        Log.w("Trip data result", result);
         try {
             JSONObject jTrip = new JSONObject(result);
-            String id=jTrip.getString("id");
-            String name=jTrip.getString("name");
-            String created=jTrip.getString("created");
-            String description=jTrip.getString("description");
-            if(jTrip.has("medias")){
+            String id = jTrip.getString("id");
+            String name = jTrip.getString("name");
+            String created = jTrip.getString("created");
+            String description = jTrip.getString("description");
+            if (jTrip.has("medias")) {
                 Object jTripMediasCheck = jTrip.get("medias");
                 if (jTripMediasCheck instanceof JSONArray) {
-                    JSONArray jTripMedias=jTrip.getJSONArray("medias");
-                    for(int k=0; k < jTripMedias.length();k++) {
+                    JSONArray jTripMedias = jTrip.getJSONArray("medias");
+                    for (int k = 0; k < jTripMedias.length(); k++) {
                         JSONObject jMedia = jTripMedias.getJSONObject(k);
-                        String mediaId=jMedia.getString("id");
-                        String mediaType=jMedia.getString("type");
-                        String mediaURL=jMedia.getString("url");
-                        String mediaMinURL=jMedia.getString("minUrl");
+                        String mediaId = jMedia.getString("id");
+                        String mediaType = jMedia.getString("type");
+                        String mediaURL = jMedia.getString("url");
+                        String mediaMinURL = jMedia.getString("minUrl");
 
-                        if(mediaType.equals("Photo")){
-                            arr.add(new MapElement(new LatLng(52,19),new String("Polska2"),mediaId,new Date(2),mediaId));
+                        if (mediaType.equals("Photo")) {
+                            arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), mediaId, new Date(2), mediaId));
                         }
 
                     }
                 }
 
             }
-
 
 
         } catch (Exception e) {
@@ -200,66 +329,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Collections.sort(arr);
         return arr;
     }
-/****************************************************
- ***************   Events ***************************
-*****************************************************/
+
+    /****************************************************
+     ***************   Events ***************************
+     *****************************************************/
     @Override
     public void onMapClick(LatLng point) {
-        MapElement mapElement=new MapElement(point,this.getLastDate().toString(),"",this.getLastDate(),"");
-        MarkerOptions mOptions=this.mapElementToMarkerOptions(mapElement);
-        Marker mmm=mMap.addMarker(mOptions);
+        MapElement mapElement = new MapElement(point, this.getLastDate().toString(), "", this.getLastDate(), "");
+        MarkerOptions mOptions = this.mapElementToMarkerOptions(mapElement);
+        Marker mmm = mMap.addMarker(mOptions);
         marker_mapelements.add(new Marker_MapElement(mmm, mapElement));
         updatePolyline();
+        onMarkerClick(mmm);
     }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        MapElement el=null;
-        for (Marker_MapElement m_el: marker_mapelements) {
-            if(m_el.marker.equals(marker)){
-                el=m_el.el;
+        MapElement el = null;
+        for (Marker_MapElement m_el : marker_mapelements) {
+            if (m_el.marker.equals(marker)) {
+                el = m_el.el;
                 break;
             }
         }
-        if(el==null){
+        if (el == null) {
             return true;
         }
         try {
 
 
-            URL url = new URL(Config.API_URL+"photos/"+String.valueOf(el.iconID));
+            URL url = new URL(Config.API_URL + "photos/" + String.valueOf(el.iconID));
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
-            Config.imageToDisplay=bmp;
+            Config.imageToDisplay = bmp;
             //Intent goToNextActivity = new Intent(getApplicationContext(), DisplayImageActivity.class);
             //startActivity(goToNextActivity);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("File photo", "Cannot download: " + Config.API_URL + "photos/" + String.valueOf(el.iconID));
         }
         MainActivity.startAddMediaActivity(this, tripId, el.pointId);
 
 
-
         return true;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /****************************************************
@@ -272,19 +385,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Date date;
         String pointId;
 
-        public MapElement(LatLng ppos, String ptitle, String piconID, Date pdate,String ppointId) {
+        public MapElement(LatLng ppos, String ptitle, String piconID, Date pdate, String ppointId) {
             pos = ppos;
             title = ptitle;
             iconID = piconID;
             date = pdate;
             pointId = ppointId;
         }
+
         @Override
         public int compareTo(MapElement o) {
             return date.compareTo(o.date);
         }
     }
-    private class Marker_MapElement  implements Comparable<Marker_MapElement> {
+
+    private class Marker_MapElement implements Comparable<Marker_MapElement> {
         MapElement el;
         Marker marker;
 
