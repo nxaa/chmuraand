@@ -106,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void refreshFromWeb() {
-       /* for (Marker_MapElement m_el: marker_mapelements) {
+        for (Marker_MapElement m_el: marker_mapelements) {
             m_el.marker.remove();
         }
         marker_mapelements.clear();
@@ -131,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             longitude/=mapElements.size();
             mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
         }
-        updatePolyline();*/
+        updatePolyline();
 
 
         JSONObject geoJSON = getGeoJSON();

@@ -4,10 +4,11 @@
     android:orientation="vertical" >
 
     <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Opcje"
-    android:id="@+id/textView" />
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Opcje"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/button_addmedia"
@@ -52,7 +53,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Trip Points:" />
+        android:text="Trip Points:"
+        android:textSize="24sp" />
 
     <ListView
         android:id="@+id/points_list"
