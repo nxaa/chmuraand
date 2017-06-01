@@ -37,21 +37,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="7dp"
-                android:text="Coordinates"
+                android:text="Współrzędne"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner"
-                android:layout_marginStart="16dp" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:text="Trip"
+                android:layout_marginStart="16dp"
+                android:text="Wycieczka"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/retakePictureButton"
-                android:layout_marginStart="16dp" />
+                app:layout_constraintTop_toBottomOf="@+id/retakePictureButton" />
 
             <Button
                 android:id="@+id/button"
@@ -134,7 +134,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:onClick="sendOnClick"
-                android:text="Send file"
+                android:text="Wyślij plik"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/xText" />
@@ -143,16 +143,17 @@
                 android:id="@+id/retakePictureButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="-507dp"
                 android:onClick="retakePhotoOnClick"
-                android:text="Retake picture"
+                android:text="Zrób zdjęcie"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
+                app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

@@ -53,7 +53,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Trip Points:"
+        android:text="Punkty wycieczki"
         android:textSize="24sp" />
 
     <ListView

@@ -11,12 +11,6 @@
     tools:context="com.example.domain.myapplication.MainActivity">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
-
     <Button
         android:id="@+id/button_addmedia"
         android:layout_width="wrap_content"
@@ -25,7 +19,7 @@
         android:layout_toEndOf="@+id/textView"
         android:layout_toRightOf="@+id/textView"
         android:onClick="addMediaOnClick"
-        android:text="Add media" />
+        android:text="Dodaj media" />
     <Button
         android:id="@+id/button_mapy"
         android:layout_width="wrap_content"
