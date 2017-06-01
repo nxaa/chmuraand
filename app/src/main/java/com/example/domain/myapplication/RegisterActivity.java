@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -72,9 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
             // Create URL
             URL RejestracjaAPI = null;
             try {
-                RejestracjaAPI = new URL("/trip/register");
+                RejestracjaAPI = new URL(Config.API_URL+"register");
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                Log.w("Login Error","Blad rejestracji");
             }
 
             // Create connection
