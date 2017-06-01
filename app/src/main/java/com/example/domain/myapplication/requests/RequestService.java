@@ -3,6 +3,11 @@ package com.example.domain.myapplication.requests;
 import android.content.ComponentName;
 import android.os.AsyncTask;
 
+import com.example.domain.myapplication.Config;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -406,5 +411,24 @@ public class RequestService {
         }
 
         return output;
+    }
+
+    public HashMap<String, String> getTripsHashMap() {
+        HashMap<String, String> map = new HashMap<String, String>();
+        String result= Config.downloadDataFromURL(Config.API_URL+"trips");
+        try {
+            JSONObject jObject = new JSONObject(result);
+            JSONArray jTrips = jObject.getJSONArray("trips");
+            for(int i=0; i < jTrips.length(); i++) {
+                JSONObject jTrip = jTrips.getJSONObject(i);
+                String id=jTrip.getString("id");
+                String name=jTrip.getString("name");
+                map.put(id, name);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        return map;
     }
 }

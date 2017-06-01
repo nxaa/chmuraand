@@ -284,10 +284,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public ArrayList<MapElement> getMapElements() {
         ArrayList<MapElement> arr = new ArrayList<MapElement>();
 
-        arr.add(new MapElement(new LatLng(51, 20), new String("Polska1"), "10", new Date(1), "1"));
-        arr.add(new MapElement(new LatLng(53, 20), new String("Polska3"), "11", new Date(3), "2"));
-        arr.add(new MapElement(new LatLng(52, 21), new String("Polska4"), "12", new Date(4), "3"));
-        arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), "13", new Date(2), "4"));
+//        arr.add(new MapElement(new LatLng(51, 20), new String("Polska1"), "10", new Date(1), "1"));
+//        arr.add(new MapElement(new LatLng(53, 20), new String("Polska3"), "11", new Date(3), "2"));
+//        arr.add(new MapElement(new LatLng(52, 21), new String("Polska4"), "12", new Date(4), "3"));
+//        arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), "13", new Date(2), "4"));
 
         String result = Config.downloadDataFromURL(Config.API_URL + "trips/" + tripId);
         Log.w("Trip data url", Config.API_URL + "trips/" + tripId);
@@ -399,7 +399,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private class Marker_MapElement implements Comparable<Marker_MapElement> {
+    public class Marker_MapElement implements Comparable<Marker_MapElement> {
         MapElement el;
         Marker marker;
 

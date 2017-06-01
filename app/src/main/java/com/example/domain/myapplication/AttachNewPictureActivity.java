@@ -1,5 +1,6 @@
 package com.example.domain.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,9 +13,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.domain.myapplication.requests.RequestService;
 
@@ -23,16 +27,20 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class AttachNewPictureActivity extends AppCompatActivity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int MAP_REQUEST_CODE = 73;
     private String tripId;
     private String pointId;
     private static Context context;
     private String mCurrentPhotoPath;
     private RequestService requestService = new RequestService();
+    HashMap<Integer,String> spinnerMap;
+    List<String> spinnerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +52,22 @@ public class AttachNewPictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attach_new_picture);
         dispatchTakePictureIntent();
         addItemsToSpinner();
+        attachEventListenerToSpinner();
+    }
+
+    private void attachEventListenerToSpinner() {
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                tripId = spinnerMap.get(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+                // sometimes you need nothing here
+            }
+        });
     }
 
     public void retakePhotoOnClick(View view) {
@@ -51,7 +75,13 @@ public class AttachNewPictureActivity extends AppCompatActivity {
     }
 
     public void sendOnClick(View view) {
-        String content = requestService.postMedia(tripId, mCurrentPhotoPath);
+        EditText xText = (EditText) findViewById(R.id.xText);
+        EditText yText = (EditText) findViewById(R.id.yText);
+        if(xText.getText().toString().equals("") || yText.getText().toString().equals("")) {
+            Toast.makeText(getApplicationContext(), "Uzupełnij lokalizację", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String content = requestService.postMedia(tripId, mCurrentPhotoPath, xText.getText().toString(), yText.getText().toString());
         //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
         alertDialog.setTitle("Dziala");
@@ -113,18 +143,48 @@ public class AttachNewPictureActivity extends AppCompatActivity {
                     mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
                 }
                 break;
+            case MAP_REQUEST_CODE:
+                if(resultCode == Activity.RESULT_OK) {
+                    String lat = data.getStringExtra("lat");
+                    String lng = data.getStringExtra("lng");
+                    EditText xText = (EditText) findViewById(R.id.xText);
+                    EditText yText = (EditText) findViewById(R.id.yText);
+                    xText.setText(lat);
+                    yText.setText(lng);
+                }
+                break;
         }
     }
 
     private void addItemsToSpinner() {
         Spinner spinner2 = (Spinner) findViewById(R.id.spinner);
-        List<String> list = new ArrayList<String>();
-        list.add("trip 1");
-        list.add("trip 2");
-        list.add("trip 3");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(dataAdapter);
+
+        HashMap<String, String> map = requestService.getTripsHashMap();
+        if(map == null) {
+            Toast.makeText(getApplicationContext(), "Błąd pobierania listy wycieczek", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            int position = 0;
+            spinnerMap = new HashMap<>();
+            spinnerList = new ArrayList<String>();
+            int i = 0;
+            for (String key : map.keySet())
+            {
+                if(key.equals(tripId)) position = i;
+                spinnerMap.put(i,key);
+                spinnerList.add(i,map.get(key));
+                i++;
+            }
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, spinnerList);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner2.setAdapter(dataAdapter);
+            spinner2.setSelection(position);
+        }
+    }
+
+    public void mapOnClick(View view) {
+        Intent i = new Intent(this, MapLocationActivity.class);
+        startActivityForResult(i, MAP_REQUEST_CODE);
     }
 }
