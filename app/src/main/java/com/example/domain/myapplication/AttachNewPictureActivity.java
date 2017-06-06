@@ -84,8 +84,8 @@ public class AttachNewPictureActivity extends AppCompatActivity {
         String content = requestService.postMedia(tripId, mCurrentPhotoPath, xText.getText().toString(), yText.getText().toString());
         //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
-        alertDialog.setTitle("Dziala");
-        alertDialog.setMessage(content);
+        alertDialog.setTitle("Status");
+        alertDialog.setMessage("OK");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
