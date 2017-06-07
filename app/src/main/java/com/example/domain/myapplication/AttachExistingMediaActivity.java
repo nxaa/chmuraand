@@ -53,6 +53,10 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attach_existing_media);
         addItemsToSpinner();
         attachEventListenerToSpinner();
+        EditText xText = (EditText) findViewById(R.id.xText);
+        EditText yText = (EditText) findViewById(R.id.yText);
+        xText.setText(Config.defaultLat);
+        yText.setText(Config.defaultLng);
     }
 
     private void attachEventListenerToSpinner() {

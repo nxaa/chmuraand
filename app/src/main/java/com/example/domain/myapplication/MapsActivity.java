@@ -81,16 +81,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -105,31 +95,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.refreshFromWeb();
     }
 
+    @Override
+    public void onResume(){  //After a pause OR at startup
+        super.onResume();
+        if(layer != null) {
+            this.refreshFromWeb();
+            Config.defaultLat="";
+            Config.defaultLng="";
+        }
+    }
+
+
     public void refreshFromWeb() {
         for (Marker_MapElement m_el: marker_mapelements) {
             m_el.marker.remove();
         }
         marker_mapelements.clear();
 
-
         ArrayList<MapElement> mapElements =  this.getMapElements();
 
-        double latitude=0;
-        double longitude=0;
         for (MapElement el: mapElements) {
-            latitude+=el.pos.latitude;
-            longitude+=el.pos.longitude;
-
             MarkerOptions mOptions=this.mapElementToMarkerOptions(el);
             Marker mmm=mMap.addMarker(mOptions);
 
             marker_mapelements.add(new Marker_MapElement(mmm, el));
-        }
-
-        if(mapElements.size()!=0){
-            latitude/=mapElements.size();
-            longitude/=mapElements.size();
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
         }
         updatePolyline();
 
@@ -154,6 +143,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
+        for (Marker_MapElement el : marker_mapelements) {
+            if (el.el.pos.latitude < 90.0){
+                coordinates.add(el.el.pos);
+            }else{
+                Log.w("c ignored", el.el.pos.toString());
+            }
+        }
+
         LatLngBounds.Builder builder = LatLngBounds.builder();
         for (LatLng latLng : coordinates) {
             builder.include(latLng);
@@ -166,7 +163,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLngBounds boundingBoxFromBuilder = builder.build();
 
-        //return boundingBox;
         return boundingBoxFromBuilder;
     }
 
@@ -214,6 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 break;
         }
+
 
         return coordinates;
     }
@@ -268,53 +265,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public MarkerOptions mapElementToMarkerOptions(MapElement el) {
         MarkerOptions mOptions = new MarkerOptions().position(el.pos).title(el.title);
         try {
-            URL url = new URL(API_URL + "trips/" + tripId + "/photos/" + String.valueOf(el.iconID));//+String.valueOf(el.iconID)
+            URL url = new URL(el.iconURL);//+String.valueOf(el.iconID)
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            Bitmap bmpSized = Bitmap.createScaledBitmap(bmp, 60, 60, false);
+            Bitmap bmpSized = Bitmap.createScaledBitmap(bmp, 120, 120, false);
             mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmpSized));
 
         } catch (Exception e) {
-            Log.w("File Error", "Cannot download: " + API_URL + "trips/" + tripId + "/photos/" + String.valueOf(el.iconID));
+            Log.w("File Error", "Cannot download: " + el.iconURL);
             //e.printStackTrace();
         }
         return mOptions;
     }
 
-
     public ArrayList<MapElement> getMapElements() {
         ArrayList<MapElement> arr = new ArrayList<MapElement>();
 
-//        arr.add(new MapElement(new LatLng(51, 20), new String("Polska1"), "10", new Date(1), "1"));
-//        arr.add(new MapElement(new LatLng(53, 20), new String("Polska3"), "11", new Date(3), "2"));
-//        arr.add(new MapElement(new LatLng(52, 21), new String("Polska4"), "12", new Date(4), "3"));
-//        arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), "13", new Date(2), "4"));
-
-        String result = Config.downloadDataFromURL(Config.API_URL + "trips/" + tripId);
-        Log.w("Trip data url", Config.API_URL + "trips/" + tripId);
+        String result = Config.downloadDataFromURL( Config.API_URL + "trips/"+tripId+"/media");
+        Log.w("Trip data url", Config.API_URL + "trips/"+tripId+"/media");
         Log.w("Trip data result", result);
         try {
-            JSONObject jTrip = new JSONObject(result);
-            String id = jTrip.getString("id");
-            String name = jTrip.getString("name");
-            String created = jTrip.getString("created");
-            String description = jTrip.getString("description");
-            if (jTrip.has("medias")) {
-                Object jTripMediasCheck = jTrip.get("medias");
-                if (jTripMediasCheck instanceof JSONArray) {
-                    JSONArray jTripMedias = jTrip.getJSONArray("medias");
-                    for (int k = 0; k < jTripMedias.length(); k++) {
-                        JSONObject jMedia = jTripMedias.getJSONObject(k);
-                        String mediaId = jMedia.getString("id");
-                        String mediaType = jMedia.getString("type");
-                        String mediaURL = jMedia.getString("url");
-                        String mediaMinURL = jMedia.getString("minUrl");
+           // JSONArray medias= JSONArray(result);
+            JSONArray jTripMedias = new JSONArray(result);
+            for (int k = 0; k < jTripMedias.length(); k++) {
+                JSONObject jMedia = jTripMedias.getJSONObject(k);
 
-                        if (mediaType.equals("Photo")) {
-                            arr.add(new MapElement(new LatLng(52, 19), new String("Polska2"), mediaId, new Date(2), mediaId));
-                        }
-
-                    }
+                if(jMedia.isNull("lat") || jMedia.isNull("lng") || jMedia.isNull("url")){
+                    continue;
                 }
+                Log.w("h",jMedia.toString());
+                String filename="no name";
+
+                String mediaId = jMedia.getString("id");
+                String mediaType = jMedia.getString("type");
+                String mediaURL = jMedia.getString("url");
+                String mediaLat = jMedia.getString("lat");
+                String mediaLng = jMedia.getString("lng");
+
+                if(!jMedia.isNull("fileName")){
+                    filename = jMedia.getString("fileName");
+                }
+                if(!jMedia.isNull("minUrl")){
+                    mediaURL = jMedia.getString("minUrl");
+                }
+
+                //if (mediaType.equals("Photo")) {
+                arr.add(new MapElement(new LatLng(Float.valueOf(mediaLat), Float.valueOf(mediaLng)), filename , mediaURL, new Date(k), mediaId));
+                //}
 
             }
 
@@ -340,7 +336,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker mmm = mMap.addMarker(mOptions);
         marker_mapelements.add(new Marker_MapElement(mmm, mapElement));
         updatePolyline();
-        onMarkerClick(mmm);
+        Config.defaultLat=String.valueOf(point.latitude);
+        Config.defaultLng=String.valueOf(point.longitude);
+        MainActivity.startAddMediaActivity(this, tripId, "1");//"1" is a dummy value
+        //onMarkerClick(mmm);
     }
 
     @Override
@@ -358,17 +357,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
 
 
-            URL url = new URL(Config.API_URL + "photos/" + String.valueOf(el.iconID));
+            URL url = new URL(el.iconURL);
             Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
             Config.imageToDisplay = bmp;
-            //Intent goToNextActivity = new Intent(getApplicationContext(), DisplayImageActivity.class);
-            //startActivity(goToNextActivity);
+            Intent goToNextActivity = new Intent(getApplicationContext(), DisplayImageActivity.class);
+            startActivity(goToNextActivity);
 
         } catch (Exception e) {
-            Log.w("File photo", "Cannot download: " + Config.API_URL + "photos/" + String.valueOf(el.iconID));
+            Log.w("File photo", "Cannot download: " + el.iconURL);
         }
-        MainActivity.startAddMediaActivity(this, tripId, el.pointId);
+        //MainActivity.startAddMediaActivity(this, tripId, el.pointId);
 
 
         return true;
@@ -381,14 +380,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private class MapElement implements Comparable<MapElement> {
         LatLng pos;
         String title;
-        String iconID;
+        String iconURL;
         Date date;
         String pointId;
 
-        public MapElement(LatLng ppos, String ptitle, String piconID, Date pdate, String ppointId) {
+        public MapElement(LatLng ppos, String ptitle, String piconURL, Date pdate, String ppointId) {
             pos = ppos;
             title = ptitle;
-            iconID = piconID;
+            iconURL = piconURL;
             date = pdate;
             pointId = ppointId;
         }
