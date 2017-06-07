@@ -69,13 +69,6 @@
 
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Punkty wycieczki"
-        android:textSize="15dp"
-        android:layout_gravity="center_horizontal" />
-
     <ListView
         android:id="@+id/points_list"
         android:layout_height="wrap_content"
