@@ -13,9 +13,17 @@
     android:layout_height = "wrap_content"
     android:id = "@+id/tripName"
     android:textSize = "20dp"
-        android:layout_marginBottom="10dp"
+    android:textColor="@android:color/black"
+        android:layout_marginBottom="15dp"
     android:layout_alignParentTop = "true"
     android:layout_centerHorizontal = "true" />
+    <TextView android:text = "Data" android:layout_width="wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/tripDateMap"
+        android:textSize = "10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_centerHorizontal = "true"
+        android:layout_below="@id/tripName"/>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -24,7 +32,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tripName"
+        android:layout_below="@id/tripDateMap"
         map:cameraZoom="6"
         tools:context="com.example.domain.myapplication.MapsActivity" />
 

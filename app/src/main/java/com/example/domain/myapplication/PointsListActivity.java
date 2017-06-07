@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -22,9 +23,14 @@ import java.util.ArrayList;
 public class PointsListActivity extends AppCompatActivity {
 
     private ArrayList<ListElement> list;
+    private TripDetails details;
     ArrayList<String> stringList;
     private String tripId="1";
     private String tripName="";
+
+    private TextView tripNameLabel;
+    private TextView tripDate;
+    private TextView tripDescription;
     private ArrayAdapter<String> adapter;
 
     ListView listView ;
@@ -37,11 +43,20 @@ public class PointsListActivity extends AppCompatActivity {
         if(intent.hasExtra("tripId")) {
             this.tripId = intent.getStringExtra("tripId");
         }
-        if(intent.hasExtra("tripName")) {
-            this.tripName = intent.getStringExtra("tripName");
-        }
+
 
         list= getListElements();
+        details = getDetails();
+
+        // ustawianie nazwy wycieczki
+        tripNameLabel = (TextView) findViewById(R.id.tripNameMenu);
+        tripNameLabel.setText(details.title);
+
+        tripDate = (TextView) findViewById(R.id.tripDate);
+        tripDate.setText("z dnia : " +details.created.substring(0,10));
+
+        tripDescription = (TextView) findViewById(R.id.tripDesc);
+        tripDescription.setText(details.description);
 
         // Get ListView object from xml
         listView = (ListView) findViewById(R.id.points_list);
@@ -113,10 +128,38 @@ public class PointsListActivity extends AppCompatActivity {
         list.add(new ListElement("4","Punkt 4"));*/
         return list;
     }
+
+    public TripDetails getDetails() {
+        TripDetails details = null;
+        String result=Config.downloadDataFromURL(Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data url",Config.API_URL+"trips/"+tripId);
+        Log.w("Trip data result",result);
+        try {
+            JSONObject jTrip = new JSONObject(result);
+            String id=jTrip.getString("id");
+            String name=jTrip.getString("name");
+            String created=jTrip.getString("created");
+            String description=jTrip.getString("description");
+            details = new TripDetails(id,name,created,description);
+
+        } catch (Exception e) {
+            Log.e("Exception", "Error: " + e.toString());
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Błąd pobierania listy punktów", Toast.LENGTH_SHORT).show();
+        }
+
+
+        return details;
+    }
+
+
+
+
     public void mapsOnClick(View view) {
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
         intent.putExtra("tripId", tripId);
-        intent.putExtra("tripName",tripName);
+        intent.putExtra("tripName",details.title);
+        intent.putExtra("tripDate",tripDate.getText());
         startActivity(intent);
     }
 
@@ -167,6 +210,21 @@ public class PointsListActivity extends AppCompatActivity {
         public ListElement(String ptripId, String ptitle) {
             pointId = ptripId;
             title = ptitle;
+        }
+    }
+
+
+    private class TripDetails  {
+        String pointId;
+        String title;
+        String created;
+        String description;
+
+        public TripDetails(String ptripId, String ptitle,String pcreated,String pdescription) {
+            pointId = ptripId;
+            title = ptitle;
+            created  = pcreated;
+            description = pdescription;
         }
     }
 

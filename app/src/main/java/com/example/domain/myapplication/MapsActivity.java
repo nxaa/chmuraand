@@ -57,7 +57,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String tripId = "1";
     private String tripName = "";
+    private String tripDate = "";
+
     private TextView tripNameLabel;
+    private TextView tripDateLabel;
+
     private GoogleMap mMap;
     private Polyline polyline;
     private ArrayList<Marker_MapElement> marker_mapelements;
@@ -75,6 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (intent.hasExtra("tripName")) {
             this.tripName = intent.getStringExtra("tripName");
         }
+        if (intent.hasExtra("tripDate")) {
+            this.tripDate = intent.getStringExtra("tripDate");
+        }
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -84,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // tytul wycieczki
         tripNameLabel= (TextView) findViewById(R.id.tripName);
         tripNameLabel.setText(tripName);
+        tripDateLabel= (TextView) findViewById(R.id.tripDateMap);
+        tripDateLabel.setText(tripDate);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
