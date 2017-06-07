@@ -20,9 +20,11 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class PointsListActivity extends AppCompatActivity {
+
     private ArrayList<ListElement> list;
     ArrayList<String> stringList;
     private String tripId="1";
+    private String tripName="";
     private ArrayAdapter<String> adapter;
 
     ListView listView ;
@@ -34,6 +36,9 @@ public class PointsListActivity extends AppCompatActivity {
 
         if(intent.hasExtra("tripId")) {
             this.tripId = intent.getStringExtra("tripId");
+        }
+        if(intent.hasExtra("tripName")) {
+            this.tripName = intent.getStringExtra("tripName");
         }
 
         list= getListElements();
@@ -111,6 +116,7 @@ public class PointsListActivity extends AppCompatActivity {
     public void mapsOnClick(View view) {
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
         intent.putExtra("tripId", tripId);
+        intent.putExtra("tripName",tripName);
         startActivity(intent);
     }
 

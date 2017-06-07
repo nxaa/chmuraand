@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -55,6 +56,8 @@ import static com.example.domain.myapplication.Config.API_URL;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
 
     private String tripId = "1";
+    private String tripName = "";
+    private TextView tripNameLabel;
     private GoogleMap mMap;
     private Polyline polyline;
     private ArrayList<Marker_MapElement> marker_mapelements;
@@ -69,11 +72,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (intent.hasExtra("tripId")) {
             this.tripId = intent.getStringExtra("tripId");
         }
+        if (intent.hasExtra("tripName")) {
+            this.tripName = intent.getStringExtra("tripName");
+        }
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         setContentView(R.layout.activity_maps);
+
+        // tytul wycieczki
+        tripNameLabel= (TextView) findViewById(R.id.tripName);
+        tripNameLabel.setText(tripName);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
