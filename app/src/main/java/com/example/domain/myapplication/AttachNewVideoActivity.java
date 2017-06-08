@@ -72,7 +72,7 @@ public class AttachNewVideoActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Uzupełnij lokalizację", Toast.LENGTH_SHORT).show();
             return;
         }
-        String content = requestService.postMedia(tripId, mCurrentVideoString, xText.getText().toString(), yText.getText().toString());
+        String content = requestService.postMedia(tripId, mCurrentVideoString, xText.getText().toString(), yText.getText().toString(), "video/avi");
         //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewVideoActivity.this).create();
         alertDialog.setTitle("Dziala");

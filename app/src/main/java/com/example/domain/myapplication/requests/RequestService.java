@@ -129,12 +129,12 @@ public class RequestService {
             return "Error";
         }
     }
+//
+//    public String postMedia(String tripId, String filepath) {
+//        return postMedia(tripId, filepath, null, null);
+//    }
 
-    public String postMedia(String tripId, String filepath) {
-        return postMedia(tripId, filepath, null, null);
-    }
-
-    public String postMedia(String tripId, String filepath, String lat, String lng) {
+    public String postMedia(String tripId, String filepath, String lat, String lng, String fileMimeType) {
         HttpURLConnection connection = null;
         DataOutputStream outputStream = null;
         InputStream inputStream = null;
@@ -151,7 +151,7 @@ public class RequestService {
         String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
         String lineEnd = "\r\n";
 
-        String fileMimeType = "image/png";
+//        String fileMimeType = "image/png";
 
         String result = "";
 
@@ -586,7 +586,7 @@ public class RequestService {
 
     public HashMap<String, String> getTripsHashMap() {
         HashMap<String, String> map = new HashMap<String, String>();
-        String result= Config.downloadDataFromURL(Config.API_URL+"trips");
+        String result= Config.downloadDataFromURL(TRIPS_URL_BASE2);
         try {
             JSONObject jObject = new JSONObject(result);
             JSONArray jTrips = jObject.getJSONArray("trips");

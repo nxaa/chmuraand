@@ -31,64 +31,64 @@
 
     <Button
         android:id="@+id/button_addmedia"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="addMediaOnClick"
-        android:text="Dodaj media"
         android:layout_below="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:onClick="addMediaOnClick"
 
-        android:layout_gravity="center_horizontal" />
+        android:text="Dodaj media" />
 
     <Button
         android:id="@+id/button_mapy"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="mapsOnClick"
-        android:text="Mapa"
         android:layout_below="@+id/button_addmedia"
+        android:layout_gravity="center_horizontal"
+        android:onClick="mapsOnClick"
 
-        android:layout_gravity="center_horizontal" />
+        android:text="Mapa" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="generujPlakatOnClick"
         android:text="Generuj plakat" />
 
     <Button
         android:id="@+id/button_plakat"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="plakatOnClick"
-        android:text="Plakat"
         android:layout_below="@+id/button_mapy"
+        android:layout_gravity="center_horizontal"
+        android:onClick="plakatOnClick"
 
-        android:layout_gravity="center_horizontal" />
+        android:text="Plakat" />
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="generujPrezentacjeOnClick"
         android:text="generuj prezentację" />
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="prezentacjaOnClick"
         android:text="prezentacja" />
 
     <Button
         android:id="@+id/button_delete_trip"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="deleteTripOnClick"
-        android:text="Usun"
         android:layout_below="@+id/button_plakat"
+        android:layout_gravity="center_horizontal"
+        android:onClick="deleteTripOnClick"
 
-        android:layout_gravity="center_horizontal" />
+        android:text="Usun" />
 
     <ListView
         android:id="@+id/points_list"

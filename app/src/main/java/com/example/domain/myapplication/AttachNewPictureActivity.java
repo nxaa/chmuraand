@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 import com.example.domain.myapplication.requests.RequestService;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,7 +89,7 @@ public class AttachNewPictureActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Uzupełnij lokalizację", Toast.LENGTH_SHORT).show();
             return;
         }
-        String content = requestService.postMedia(tripId, mCurrentPhotoPath, xText.getText().toString(), yText.getText().toString());
+        String content = requestService.postMedia(tripId, mCurrentPhotoPath, xText.getText().toString(), yText.getText().toString(), "image/png");
         //TODO: TUTAJ COS    TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
         alertDialog.setTitle("Status");
@@ -144,7 +148,24 @@ public class AttachNewPictureActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     ImageView mImageView = (ImageView) findViewById(R.id.myImageView);
-                    mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+                    BitmapFactory.Options option = new BitmapFactory.Options();
+                    Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath, option);
+//                    Matrix matrix = new Matrix();
+//                    // setup rotation degree
+//                    matrix.postRotate(90);
+//                    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                    mImageView.setImageBitmap(bmp);
+                    FileOutputStream out = null;
+                    try {
+                        mCurrentPhotoPath = mCurrentPhotoPath.substring(0, mCurrentPhotoPath.lastIndexOf('.')) + ".png";
+                        out = new FileOutputStream(mCurrentPhotoPath);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out); //100-best quality
+                        out.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case MAP_REQUEST_CODE:

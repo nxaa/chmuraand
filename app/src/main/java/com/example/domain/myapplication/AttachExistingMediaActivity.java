@@ -36,6 +36,7 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
     private String tripId;
     private String pointId;
     private String mediaExtension;
+    private String mimeType;
     private Uri uri;
     private static Context context;
     private RequestService requestService = new RequestService();
@@ -50,6 +51,12 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
         this.tripId = intent.getStringExtra("tripId");
         this.pointId = intent.getStringExtra("pointId");
         this.mediaExtension = intent.getStringExtra("mediaExtension");
+        if(this.mediaExtension.equals(".png")) {
+            mimeType = "image/" + this.mediaExtension.substring(1);
+        }
+        else if(this.mediaExtension.equals(".avi")) {
+            mimeType = "video/" + this.mediaExtension.substring(1);
+        }
         setContentView(R.layout.activity_attach_existing_media);
         addItemsToSpinner();
         attachEventListenerToSpinner();
@@ -113,7 +120,7 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Uzupełnij lokalizację", Toast.LENGTH_SHORT).show();
             return;
         }
-        String content = requestService.postMedia(tripId, filePathText.getText().toString(), xText.getText().toString(), yText.getText().toString());
+        String content = requestService.postMedia(tripId, filePathText.getText().toString(), xText.getText().toString(), yText.getText().toString(), mimeType);
         //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachExistingMediaActivity.this).create();
         alertDialog.setTitle("Dziala");
@@ -138,7 +145,7 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers,
         // it would be "*/*".
-        intent.setType("image/" + mediaExtension.substring(1));
+        intent.setType(mimeType);
 
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
