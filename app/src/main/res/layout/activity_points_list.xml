@@ -31,6 +31,13 @@
         android:layout_alignStart="@+id/button_addmedia" />
 
     <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="generujPlakatOnClick"
+        android:text="Generuj plakat" />
+
+    <Button
         android:id="@+id/button_plakat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,6 +46,20 @@
         android:layout_below="@+id/button_mapy"
         android:layout_alignLeft="@+id/button_mapy"
         android:layout_alignStart="@+id/button_mapy" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="generujPrezentacjeOnClick"
+        android:text="generuj prezentację" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="prezentacjaOnClick"
+        android:text="prezentacja" />
 
     <Button
         android:id="@+id/button_delete_trip"

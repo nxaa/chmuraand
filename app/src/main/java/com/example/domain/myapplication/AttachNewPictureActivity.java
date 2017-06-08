@@ -82,7 +82,7 @@ public class AttachNewPictureActivity extends AppCompatActivity {
             return;
         }
         String content = requestService.postMedia(tripId, mCurrentPhotoPath, xText.getText().toString(), yText.getText().toString());
-        //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
+        //TODO: TUTAJ COS    TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
         AlertDialog alertDialog = new AlertDialog.Builder(AttachNewPictureActivity.this).create();
         alertDialog.setTitle("Status");
         alertDialog.setMessage("OK");

@@ -158,6 +158,42 @@ public class RequestService {
         return sb.toString();
     }
 
+    public String generatePresentation(String tripId) {
+        URL url;
+        HttpURLConnection connection = null;
+        String output = "";
+        try {
+
+            url = new URL(TRIPS_URL_BASE + tripId + "/run_job/presentation");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return "Error, response code = " + responseCode;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                output += a;
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } finally {
+            connection.disconnect();
+        }
+
+        return output;
+    }
+
     public String getPresentations(String tripId) {
         URL url;
         HttpURLConnection connection = null;
@@ -165,6 +201,39 @@ public class RequestService {
         try {
             url = new URL(TRIPS_URL_BASE + tripId + "/presentations");
             connection = (HttpURLConnection) url.openConnection();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return "Error, response code = " + responseCode;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                output += a;
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            connection.disconnect();
+        }
+
+        return output;
+    }
+
+    public String generatePoster(String tripId) {
+        URL url;
+        HttpURLConnection connection = null;
+        String output = "";
+        try {
+            url = new URL(TRIPS_URL_BASE + tripId + "/run_job/poster");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
 
             int responseCode = connection.getResponseCode();
             if (responseCode != 200) {
