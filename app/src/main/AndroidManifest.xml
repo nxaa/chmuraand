@@ -71,7 +71,8 @@
         <activity
             android:name=".MapLocationActivity"
             android:label="@string/title_activity_map_location"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".AddTripActivity"></activity>
     </application>
 
 </manifest>

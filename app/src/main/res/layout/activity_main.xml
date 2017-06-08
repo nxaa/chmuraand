@@ -11,6 +11,8 @@
     tools:context="com.example.domain.myapplication.MainActivity">
 
 
+
+
     <Button
         android:id="@+id/button_addmedia"
         android:layout_width="wrap_content"
@@ -19,6 +21,7 @@
         android:layout_toEndOf="@+id/textView"
         android:layout_toRightOf="@+id/textView"
         android:onClick="addMediaOnClick"
+        android:layout_centerHorizontal = "true"
         android:text="Dodaj media" />
     <Button
         android:id="@+id/button_mapy"
@@ -28,7 +31,8 @@
         android:text="Mapy"
         android:layout_below="@+id/button_addmedia"
         android:layout_alignLeft="@+id/button_addmedia"
-        android:layout_alignStart="@+id/button_addmedia" />
+        android:layout_alignStart="@+id/button_addmedia"
+        android:layout_centerHorizontal = "true"/>
 
     <Button
         android:id="@+id/button_trips"
@@ -38,7 +42,8 @@
         android:text="Wycieczki"
         android:layout_below="@+id/button_mapy"
         android:layout_alignLeft="@+id/button_mapy"
-        android:layout_alignStart="@+id/button_mapy" />
+        android:layout_alignStart="@+id/button_mapy"
+        android:layout_centerHorizontal = "true"/>
 
     <Button
         android:id="@+id/button_login"
@@ -48,7 +53,8 @@
         android:text="Login"
         android:layout_below="@+id/button_trips"
         android:layout_alignLeft="@+id/button_trips"
-        android:layout_alignStart="@+id/button_trips" />
+        android:layout_alignStart="@+id/button_trips"
+        android:layout_centerHorizontal = "true"/>
 
 
 </RelativeLayout>

@@ -58,6 +58,7 @@ public class TripsListActivity extends AppCompatActivity {
                 Log.w("wwwww",el.title);
                 Intent intent = new Intent(getApplicationContext(), PointsListActivity.class);
                 intent.putExtra("tripId", String.valueOf(el.tripId));
+                intent.putExtra("tripName", String.valueOf(el.title));
                 startActivity(intent);
             }
         });
@@ -105,6 +106,11 @@ public class TripsListActivity extends AppCompatActivity {
         list.add(new ListElement(3,"Poznan"));
         list.add(new ListElement(4,"Warszawa"));*/
         return list;
+    }
+
+    public void addNewTripButtonOnClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), AddTripActivity.class);
+        startActivity(intent);
     }
 
 
