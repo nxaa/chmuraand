@@ -10,10 +10,17 @@
         android:text="Wycieczki:"
         android:textSize="24sp" />
 
+    <Button
+        android:id="@+id/addNewTripButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="addNewTripButtonOnClick"
+        android:text="Dodaj"
+        android:visibility="visible" />
+
     <ListView
         android:id="@+id/list"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-    </ListView>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
 
 </LinearLayout>

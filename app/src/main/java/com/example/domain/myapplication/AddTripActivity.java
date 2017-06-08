@@ -16,102 +16,42 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.domain.myapplication.R;
 import com.example.domain.myapplication.requests.RequestService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
-public class AttachExistingMediaActivity extends AppCompatActivity {
+public class AddTripActivity extends AppCompatActivity {
 
     private static final int READ_REQUEST_CODE = 42;
-    private static final int MAP_REQUEST_CODE = 73;
-    private String tripId;
-    private String pointId;
-    private String mediaExtension;
     private Uri uri;
     private static Context context;
     private RequestService requestService = new RequestService();
-    HashMap<Integer,String> spinnerMap;
-    List<String> spinnerList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = getApplicationContext();
-        Intent intent = getIntent();
-        this.tripId = intent.getStringExtra("tripId");
-        this.pointId = intent.getStringExtra("pointId");
-        this.mediaExtension = intent.getStringExtra("mediaExtension");
-        setContentView(R.layout.activity_attach_existing_media);
-        addItemsToSpinner();
-        attachEventListenerToSpinner();
+        setContentView(R.layout.activity_add_trip);
     }
 
-    private void attachEventListenerToSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                tripId = spinnerMap.get(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-                // sometimes you need nothing here
-            }
-        });
-    }
-
-    private void addItemsToSpinner() {
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner);
-
-        HashMap<String, String> map = requestService.getTripsHashMap();
-        if(map == null) {
-            Toast.makeText(getApplicationContext(), "Błąd pobierania listy wycieczek", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            int position = 0;
-            spinnerMap = new HashMap<>();
-            spinnerList = new ArrayList<String>();
-            int i = 0;
-            for (String key : map.keySet())
-            {
-                if(key.equals(tripId)) position = i;
-                spinnerMap.put(i,key);
-                spinnerList.add(i,map.get(key));
-                i++;
-            }
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, spinnerList);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner2.setAdapter(dataAdapter);
-            spinner2.setSelection(position);
-        }
-    }
-
-    public void sendOnClick(View view) {
-        EditText xText = (EditText) findViewById(R.id.xText);
-        EditText yText = (EditText) findViewById(R.id.yText);
-        EditText filePathText = (EditText) findViewById(R.id.filePathText);
+    public void addTripOnClick(View view) {
+        EditText nameText = (EditText) findViewById(R.id.nameText);
+        EditText descText = (EditText) findViewById(R.id.descriptionText);
+        EditText filePathText = (EditText) findViewById(R.id.filePathGPXText);
         if(filePathText.getText().toString().equals("")) {
             Toast.makeText(getApplicationContext(), "Wybierz plik", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(xText.getText().toString().equals("") || yText.getText().toString().equals("")) {
-            Toast.makeText(getApplicationContext(), "Uzupełnij lokalizację", Toast.LENGTH_SHORT).show();
+        if(nameText.getText().toString().equals("") || descText.getText().toString().equals("")) {
+            Toast.makeText(getApplicationContext(), "Uzupełnij nazwę i opis wycieczki", Toast.LENGTH_SHORT).show();
             return;
         }
-        String content = requestService.postMedia(tripId, filePathText.getText().toString(), xText.getText().toString(), yText.getText().toString());
+        String content = requestService.postTrip(filePathText.getText().toString(), nameText.getText().toString(), descText.getText().toString());
         //TODO: TUTAJ COS TRZEBA ZROBIC Z TYM ZE SIE WYSYLA :P
-        AlertDialog alertDialog = new AlertDialog.Builder(AttachExistingMediaActivity.this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(AddTripActivity.this).create();
         alertDialog.setTitle("Dziala");
         alertDialog.setMessage(content);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
@@ -134,7 +74,7 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers,
         // it would be "*/*".
-        intent.setType("image/" + mediaExtension.substring(1));
+        intent.setType("*/*");
 
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
@@ -150,19 +90,34 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            if (resultData != null) {
-                uri = resultData.getData();
-                EditText mFilePathText = (EditText) findViewById(R.id.filePathText);
-                mFilePathText.setText(getPath(context, uri));
+            try {
+                if (resultData != null) {
+                    uri = resultData.getData();
+                    String path = getPath(context, uri);
+                    if(path == null) {
+                        Toast.makeText(context, "Plik niedostępny", Toast.LENGTH_SHORT).show();
+                        uri = null;
+                        EditText mFilePathText = (EditText) findViewById(R.id.filePathGPXText);
+                        mFilePathText.setText(null);
+                    }
+                    else if(!path.substring(path.lastIndexOf('.')).equals(".gpx")
+                            && !path.substring(path.lastIndexOf('.')).equals(".kml")) {
+                        Toast.makeText(context, "Zły format pliku", Toast.LENGTH_SHORT).show();
+                        uri = null;
+                        EditText mFilePathText = (EditText) findViewById(R.id.filePathGPXText);
+                        mFilePathText.setText(null);
+                    }
+                    else {
+                        EditText mFilePathText = (EditText) findViewById(R.id.filePathGPXText);
+                        mFilePathText.setText(getPath(context, uri));
+                    }
+                }
             }
-        }
-        else if(requestCode == MAP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            String lat = resultData.getStringExtra("lat");
-            String lng = resultData.getStringExtra("lng");
-            EditText xText = (EditText) findViewById(R.id.xText);
-            EditText yText = (EditText) findViewById(R.id.yText);
-            xText.setText(lat);
-            yText.setText(lng);
+            catch (Exception e) {
+                uri = null;
+                EditText mFilePathText = (EditText) findViewById(R.id.filePathGPXText);
+                mFilePathText.setText(null);
+            }
         }
     }
 
@@ -284,10 +239,5 @@ public class AttachExistingMediaActivity extends AppCompatActivity {
      */
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    public void mapOnClick(View view) {
-        Intent i = new Intent(this, MapLocationActivity.class);
-        startActivityForResult(i, MAP_REQUEST_CODE);
     }
 }

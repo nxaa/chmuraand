@@ -107,6 +107,11 @@ public class TripsListActivity extends AppCompatActivity {
         return list;
     }
 
+    public void addNewTripButtonOnClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), AddTripActivity.class);
+        startActivity(intent);
+    }
+
 
     /****************************************************
      ***************   Helper Classes *******************
