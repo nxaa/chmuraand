@@ -58,6 +58,7 @@ public class TripsListActivity extends AppCompatActivity {
                 Log.w("wwwww",el.title);
                 Intent intent = new Intent(getApplicationContext(), PointsListActivity.class);
                 intent.putExtra("tripId", String.valueOf(el.tripId));
+                intent.putExtra("tripName", String.valueOf(el.title));
                 startActivity(intent);
             }
         });

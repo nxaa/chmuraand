@@ -139,10 +139,12 @@ public class RequestService {
         DataOutputStream outputStream = null;
         InputStream inputStream = null;
         Map<String, String> params = new HashMap<>();
+        String suffix = "";
 
         if (lat != null && lng != null) {
-            params.put("lat", lat);
-            params.put("lng", lng);
+            /*params.put("lat", lat);
+            params.put("lng", lng);*/
+            suffix = "?lat=" + lat + "&lng=" + lng;
         }
 
         String twoHyphens = "--";
@@ -164,7 +166,7 @@ public class RequestService {
             File file = new File(filepath);
             FileInputStream fileInputStream = new FileInputStream(file);
 
-            URL url = new URL(TRIPS_URL_BASE + tripId + "/media");
+            URL url = new URL(TRIPS_URL_BASE + tripId + "/media2" + suffix);
             connection = (HttpURLConnection) url.openConnection();
 
             connection.setDoInput(true);
@@ -215,7 +217,8 @@ public class RequestService {
             outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             if (200 != connection.getResponseCode()) {
-                return "Error, response code = " + connection.getResponseCode();
+                return "Error, response code = " + connection.getResponseCode()
+                        + "tripId: " + tripId + " , filepath: " + filepath + " , lat: " + lat + " , lng: " + lng + "\n" + "URL: " + url.toString();
             }
 
             inputStream = connection.getInputStream();
@@ -227,7 +230,7 @@ public class RequestService {
             outputStream.flush();
             outputStream.close();
 
-            return result;
+            return result + "tripId: " + tripId + " , filepath: " + filepath + " , lat: " + lat + " , lng: " + lng + "\n" + "URL: " + url.toString();
         } catch (Exception e) {
             return "Error";
         }

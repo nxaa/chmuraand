@@ -3,12 +3,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView android:text = "Wycieczka" android:layout_width="wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/tripNameMenu"
+        android:textSize = "30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentTop = "true"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView android:text = "z dnia:" android:layout_width="wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/tripDate"
+        android:textSize = "10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentTop = "true"
+        android:layout_gravity="center_horizontal" />
+
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Opcje"
-        android:textSize="24sp" />
+        android:textSize="15dp"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/button_addmedia"
@@ -17,8 +36,8 @@
         android:onClick="addMediaOnClick"
         android:text="Dodaj media"
         android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView" />
+
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/button_mapy"
@@ -27,8 +46,8 @@
         android:onClick="mapsOnClick"
         android:text="Mapa"
         android:layout_below="@+id/button_addmedia"
-        android:layout_alignLeft="@+id/button_addmedia"
-        android:layout_alignStart="@+id/button_addmedia" />
+
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/button_plakat"
@@ -37,8 +56,8 @@
         android:onClick="plakatOnClick"
         android:text="Plakat"
         android:layout_below="@+id/button_mapy"
-        android:layout_alignLeft="@+id/button_mapy"
-        android:layout_alignStart="@+id/button_mapy" />
+
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/button_delete_trip"
@@ -47,19 +66,36 @@
         android:onClick="deleteTripOnClick"
         android:text="Usun"
         android:layout_below="@+id/button_plakat"
-        android:layout_alignLeft="@+id/button_plakat"
-        android:layout_alignStart="@+id/button_plakat" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Punkty wycieczki"
-        android:textSize="24sp" />
+        android:layout_gravity="center_horizontal" />
 
     <ListView
         android:id="@+id/points_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
     </ListView>
+
+    <TextView android:text = "Opis:" android:layout_width="wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/tripDescTitle"
+        android:textSize = "20dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/black"
+        android:layout_alignParentTop = "true"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView android:text = "bla bla" android:layout_width="match_parent"
+        android:layout_height = "match_parent"
+        android:id = "@+id/tripDesc"
+        android:textSize = "10dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/black"
+        android:layout_alignParentTop = "true"
+        />
+
+
+
+
 
 </LinearLayout>

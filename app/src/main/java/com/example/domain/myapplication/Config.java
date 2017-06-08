@@ -21,6 +21,8 @@ public class Config {
     public static  int tripID=0;
     public static  int tripElementID=0;
     public static Bitmap imageToDisplay;
+    public static String defaultLat="";//52
+    public static String defaultLng="";//21
 
     public static boolean sendDeleteUrl(Context context, String urlStr) {
         try {
